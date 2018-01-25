@@ -1,0 +1,5 @@
+largeur d'affichage des symboles diagonal (ex: [1,6] qui compte pour 2 et non pas pour 3)
+
+Briser les lignes de type [1,3] en [1,2],[2,3]
+
+Meilleure gestion de la taille des élements. Passer app en flex et espacer les composant

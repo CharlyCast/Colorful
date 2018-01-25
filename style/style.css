@@ -1,0 +1,177 @@
+html{
+    background-color: #3f4349;
+    color: white;
+}
+
+body {
+    font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+    font-size: 14px;
+}
+
+h1{
+    position: relative;
+    min-height: 1px;
+    padding-right: 15px;
+    padding-left: 15px;
+    font-size: 36px;
+}
+
+#main-header{
+    display: flex;
+    flex-direction: column;
+    height: 10vh;
+}
+
+.main-header__upper-part{
+    display: flex;
+    flex-direction: row;
+}
+
+.main-header__upper-part h1{
+    font-size: 6vh;
+    margin-top: auto;
+    margin-bottom: auto;
+}
+
+.logo {
+    height: 8vh;
+    /*object-fit: scale-down;*/
+    width: auto;
+    margin:auto;
+}
+
+.separationBar {
+    object-fit: fill;
+    width: 100%;
+    height: 100%;
+}
+
+.navigator{
+    display: flex;
+    flex-direction: row;
+}
+
+.navigator__button{
+    margin:auto;
+    margin-right:5px;
+    border-radius: 5px;
+    border-style: solid;
+    padding: 0px 5px 0px 5px;
+}
+
+.interpreter{
+    display: flex;
+    flex-direction: row;
+    height: 85vh;
+}
+
+.terminal{
+    background-color: #2a313d;
+    height: 80vh;
+    width: 60vw;
+    margin: auto;
+    margin-right: 2vw;
+    margin-left: 2vw;
+}
+
+#dev-zone{
+    display: flex;
+    flex-flow: row;
+}
+
+#code-zone{
+    background-color: #2a313d;
+    height: 85vh;
+    min-width: 40vw;
+    display: flex;
+    flex-direction: column;
+}
+
+.code-line{
+    display: flex;
+    flex-direction: row;
+    width: 40vw;
+    margin-top: 3px;
+}
+
+.symbol{
+    /*We are setting a small font and then the symbol size to 26em, in order to keep the same proportion as the drawing zone*/
+    font-size:5%;
+    height: 26em;
+    margin: 2em;
+}
+
+.indent{
+    font-size:5%;
+    width: 26em;
+    height: 26em;
+    margin: 2em;
+}
+
+#color-zone{
+    display:flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    justify-content: flex-start;
+    min-width: 25vw;
+}
+
+.color-picker{
+    margin: 2px;
+    width: 7vw;
+    height: 7vw;
+    border-radius: 10%;
+}
+
+#drawing-zone{
+    min-width: 30vw;
+}
+
+.send{
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+}
+
+.send-drawing{
+    text-align: center;
+    margin: auto;
+    border-radius: 5px;
+    border-style: solid;
+    margin-top: 1vw;
+    padding-left: 1vw;
+    padding-right: 1vw;
+}
+
+.drawing-sensor{
+    /*margin: 2px;*/
+    width: 4vw;
+    height: 4vw;
+}
+
+.sensor-pannel{
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    width: 26vw;
+    height: 26vw;
+    margin: auto;
+}
+
+.sensor-row{
+    z-index:1;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+}
+
+.connect-lines{
+    z-index:0; /* in background */
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 26vw;
+    height: 26vw;
+}
+
