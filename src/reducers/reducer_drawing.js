@@ -13,7 +13,6 @@ export default function (state = [], action) {
                         state[state.length - 1].push(action.payload);
                     }
                     else {
-                        console.log("len 1");
                         state[state.length - 1][0] = action.payload;
                     }
                 }
@@ -22,13 +21,11 @@ export default function (state = [], action) {
                         state.push([state[state.length - 1][1], action.payload]);
                     }
                     else {
-                        console.log("len 2");
                         state.push([action.payload]);
                     }
                 }
                 state = state.slice();
             }
-            console.log("state : ", state);
             return state;
             break;
 
@@ -51,6 +48,5 @@ function alredyUsedEdge(symbol, edge) {
             bool = true;
         }
     });
-    console.log("Pas encore utilisée : ", bool);
     return bool;
 }

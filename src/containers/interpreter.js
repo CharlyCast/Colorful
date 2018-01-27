@@ -8,9 +8,9 @@ class Interpreter extends Component{
         return (
             <div className="interpreter">
                 <Terminal/>
-                <button onClick={()=>this.props.code[0].map((element)=>{
-                    this.props.interpreter.classify(element.symbol);
-                })}>compile</button>
+                <button onClick={()=>
+                    this.props.interpreter.interpret(this.props.code)
+                }>compile</button>
             </div>
         );
     }

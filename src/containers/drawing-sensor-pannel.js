@@ -7,7 +7,8 @@ class DrawingSensorPannel extends Component {
     render() {
         return (
             <div className="sensor-pannel"
-                 onMouseMove={() => console.log("ça bouge")}>
+                 // onMouseMove={() => console.log("ça bouge")}
+            >
                 {this.drawConnectLine()}
                 <div className="sensor-row">
                     <DrawingSensor sensor={1}/>

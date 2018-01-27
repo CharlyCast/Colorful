@@ -3,7 +3,7 @@ import {connect} from 'react-redux';
 import {bindActionCreators} from 'redux';
 import Header from '../components/header';
 import AppBody from './app-body';
-import Tokenizer from '../compiler/tokenizer';
+import Interpreter from '../compiler/interpreter';
 import {loadInterpreter} from "../actions/index";
 
 class App extends Component {
@@ -11,7 +11,7 @@ class App extends Component {
     constructor(props) {
         super(props);
 
-        this.props.loadInterpreter(new Tokenizer());
+        this.props.loadInterpreter(new Interpreter());
     }
 
     render() {
