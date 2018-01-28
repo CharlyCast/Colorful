@@ -6,7 +6,6 @@ class ColorZone extends Component {
     render() {
         return (
             <div id="color-zone">
-                {/*<div className="col-xs-3" id="color-zone">*/}
                 {this.renderList()}
             </div>
         )
