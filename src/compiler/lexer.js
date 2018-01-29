@@ -1,4 +1,5 @@
 import Type from './types';
+import Value from './value';
 
 //The alphabet sorted by type
 const alphabet = [
@@ -67,19 +68,23 @@ const alphabet = [
     }, {
         edges: [[2, 5], [4, 5], [5, 6], [5, 8]],
         romaji: "+",
-        type: Type.operator
+        type: Type.operator,
+        value : Value.add
     }, {
         edges: [[4, 5]],
         romaji: "-",
-        type: Type.operator
+        type: Type.operator,
+        value : Value.sub
     }, {
         edges: [[1, 5], [3, 5], [5, 7], [5, 9]],
         romaji: "*",
-        type: Type.operator
+        type: Type.operator,
+        value : Value.mult
     }, {
         edges: [[2, 7]],
         romaji: "/",
-        type: Type.operator
+        type: Type.operator,
+        value : Value.div
     }, {
         edges: [[1, 2], [2, 7], [7, 8]],
         romaji: "%",
@@ -136,7 +141,7 @@ export default class Lexer {
             else {
                 return {
                     romaji: "end line",
-                    type: Type.endline,
+                    type: Type.endLine,
                     color: "#ffffff"
                 }
             }
