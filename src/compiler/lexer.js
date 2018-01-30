@@ -56,11 +56,13 @@ const alphabet = [
     }, {
         edges: [[1, 2], [2, 3], [2, 5], [5, 8]],
         romaji: "True",
-        type: Type.boolean
+        type: Type.boolean,
+        value: true
     }, {
         edges: [[1, 2], [1, 4], [4, 5], [4, 7]],
         romaji: "False",
-        type: Type.boolean
+        type: Type.boolean,
+        value: false
     }, {
         edges: [[2, 7], [2, 9], [7, 8], [8, 9]],
         romaji: "var",
@@ -69,22 +71,22 @@ const alphabet = [
         edges: [[2, 5], [4, 5], [5, 6], [5, 8]],
         romaji: "+",
         type: Type.operator,
-        value : Value.add
+        value: Value.add
     }, {
         edges: [[4, 5]],
         romaji: "-",
         type: Type.operator,
-        value : Value.sub
+        value: Value.sub
     }, {
         edges: [[1, 5], [3, 5], [5, 7], [5, 9]],
         romaji: "*",
         type: Type.operator,
-        value : Value.mult
+        value: Value.mult
     }, {
         edges: [[2, 7]],
         romaji: "/",
         type: Type.operator,
-        value : Value.div
+        value: Value.div
     }, {
         edges: [[1, 2], [2, 7], [7, 8]],
         romaji: "%",
@@ -92,11 +94,13 @@ const alphabet = [
     }, {
         edges: [[5, 7], [5, 9]],
         romaji: "and",
-        type: Type.operator
+        type: Type.operator,
+        value: Value.and
     }, {
         edges: [[4, 8], [6, 8]],
         romaji: "or",
-        type: Type.operator
+        type: Type.operator,
+        value: Value.or
     }, {
         edges: [[1, 2], [4, 5]],
         romaji: "=",

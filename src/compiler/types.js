@@ -8,6 +8,5 @@ export default class Type {
     static affectation = 7;
 
     constructor() {
-
     }
 }

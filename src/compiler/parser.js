@@ -23,11 +23,11 @@ export default function parse(tokens) {
 
 function buildNode(cursor, tokens) {
     let token = tokens[cursor.pos];
+    let color = token.color;
     switch (token.type) {
 
         case Type.number:
             let value = token.value;
-            let color = token.color;
             while (tokens[cursor.pos + 1].type === Type.number && tokens[cursor.pos + 1].color === color) {
                 cursor.pos++;
                 value *= 10;
@@ -37,7 +37,18 @@ function buildNode(cursor, tokens) {
                 return new SyntaxNode(Type.number, value);
             }
             else {
-                return new SyntaxNode(Type.affectation, color, [new SyntaxNode(Type.number, value)]);
+                let affectation =new SyntaxNode(Type.affectation, color, [new SyntaxNode(Type.number, value)]);
+                return new SyntaxNode(Type.id, color, [affectation]);
+            }
+            break;
+
+        case Type.boolean:
+            if (color === "#ffffff"){
+                return new SyntaxNode(Type.boolean, token.value);
+            }
+            else {
+                let affectation = new SyntaxNode(Type.affectation, color, [new SyntaxNode(Type.boolean, token.value)]);
+                return new SyntaxNode(Type.id,color, [affectation]);
             }
             break;
 
@@ -46,7 +57,12 @@ function buildNode(cursor, tokens) {
             break;
 
         case Type.operator:
-            return new SyntaxNode(Type.operator,token.value);
+            return new SyntaxNode(Type.operator, token.value);
+            break;
+
+        case Type.affectation:
+            return new SyntaxNode(Type.affectation, token.color);
+            break;
 
         case Type.endLine:
             return new SyntaxNode(Type.endLine);
@@ -56,11 +72,23 @@ function buildNode(cursor, tokens) {
 }
 
 function buildTree(cursor, tokens) {
+    //Build an abstract syntax tree that embodies the instruction starting at cursor position.
+
     let node = buildNode(cursor, tokens);
     cursor.pos++;
 
-    if (node.type===Type.number){
-        return(buildExpression(cursor,tokens,node));
+    if (node.type === Type.number || node.type === Type.boolean) {
+        return (buildExpression(cursor, tokens, node));
+    }
+    else if (node.type === Type.affectation) {
+        let value = buildNode(cursor, tokens);
+        cursor.pos++;
+        if (value.type !== Type.number && value.type !== Type.id) {
+            return null;
+        }
+        else {
+            node.children.push(buildExpression(cursor, tokens, value));
+        }
     }
 
     return node;
@@ -75,7 +103,7 @@ function buildExpression(cursor, tokens, node) {
 
     let operatorNode = buildNode(cursor, tokens);
 
-    if (operatorNode===null){
+    if (operatorNode === null) {
         //Error, should be an operator
         return null;
     }
@@ -85,18 +113,18 @@ function buildExpression(cursor, tokens, node) {
 
     if (operatorNode.type === Type.operator) {
         cursor.pos++;
-        let nextNode=buildNode(cursor,tokens);
+        let nextNode = buildNode(cursor, tokens);
         cursor.pos++;
 
         //Low priority operator
-        if (operatorNode.value===Value.add || operatorNode.value===Value.sub){
-            operatorNode.children.push(buildExpression(cursor,tokens,nextNode));
+        if (operatorNode.value === Value.add || operatorNode.value === Value.sub || operatorNode.value === Value.or) {
+            operatorNode.children.push(buildExpression(cursor, tokens, nextNode));
             return operatorNode;
         }
         //High priority operator
         else {
             operatorNode.children.push(nextNode);
-            return buildExpression(cursor,tokens,operatorNode);
+            return buildExpression(cursor, tokens, operatorNode);
         }
     }
     else if (operatorNode.type === Type.endLine) {
