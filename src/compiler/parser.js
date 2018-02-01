@@ -10,7 +10,9 @@ export default function parse(tokens) {
     while (cursor.pos < tokens.length) {
         tree = buildTree(cursor, tokens);
         if (tree !== null) {
-            abstractSyntaxTrees.push(tree);
+            if (tree.type!==Type.endLine){
+                abstractSyntaxTrees.push(tree);
+            }
         }
         else {
             console.log("Error while parsing");
@@ -57,7 +59,13 @@ function buildNode(cursor, tokens) {
             break;
 
         case Type.operator:
-            return new SyntaxNode(Type.operator, token.value);
+            if (color === "#ffffff"){
+                return new SyntaxNode(Type.operator, token.value);
+            }
+            else{
+                return new SyntaxNode(Type.operator, token.value, [new SyntaxNode(Type.id, color)]);
+            }
+
             break;
 
         case Type.affectation:
@@ -77,15 +85,20 @@ function buildTree(cursor, tokens) {
     let node = buildNode(cursor, tokens);
     cursor.pos++;
 
-    if (node.type === Type.number || node.type === Type.boolean) {
+    if (node.type === Type.number || node.type === Type.boolean || node.type===Type.id) {
         return (buildExpression(cursor, tokens, node));
     }
+
+    //This is an affectation with an arrow  <-.
     else if (node.type === Type.affectation) {
         let value = buildNode(cursor, tokens);
         cursor.pos++;
-        if (value.type !== Type.number && value.type !== Type.id) {
+
+
+        if (value.type !== Type.number && value.type !== Type.id & value.type !== Type.boolean) {
             return null;
         }
+        //Building the corresponding expression
         else {
             node.children.push(buildExpression(cursor, tokens, value));
         }
@@ -99,8 +112,6 @@ function buildExpression(cursor, tokens, node) {
     //Recursive function that build the tree of the current expression.
     //Takes a node which value is a number (or a variable) ans the cursor right after it.
 
-    // console.log("Expression node : ", node);
-
     let operatorNode = buildNode(cursor, tokens);
 
     if (operatorNode === null) {
@@ -109,12 +120,21 @@ function buildExpression(cursor, tokens, node) {
     }
     operatorNode.children.push(node);
 
-    // console.log("Next node : ", operatorNode);
-
     if (operatorNode.type === Type.operator) {
+        let nextNode;
         cursor.pos++;
-        let nextNode = buildNode(cursor, tokens);
-        cursor.pos++;
+
+        //If this is a white operator
+        //While building the operatorNode, if it was colored its first child is a reference to its color
+        //Else it has only one child
+        if (operatorNode.children.length===1){
+            nextNode = buildNode(cursor, tokens);
+            cursor.pos++;
+        }
+        else {
+            nextNode=operatorNode.children[0];
+            operatorNode.children=[operatorNode.children[1]];
+        }
 
         //Low priority operator
         if (operatorNode.value === Value.add || operatorNode.value === Value.sub || operatorNode.value === Value.or) {
@@ -134,5 +154,3 @@ function buildExpression(cursor, tokens, node) {
         return null;
     }
 }
-
-
