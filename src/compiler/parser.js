@@ -138,9 +138,18 @@ function buildExpression(cursor, tokens, node) {
 
         //Low priority operator
         if (operatorNode.value === Value.add || operatorNode.value === Value.sub || operatorNode.value === Value.or) {
+
+            //If the operator is a subtraction and the next isn't a high priority operator:
+            if (operatorNode.value === Value.sub && tokens[cursor.pos].type===Type.operator){
+                if (tokens[cursor.pos].value!==Value.mult && tokens[cursor.pos].value!==Value.div){
+                    operatorNode.children.push(nextNode);
+                    return buildExpression(cursor, tokens, operatorNode);
+                }
+            }
             operatorNode.children.push(buildExpression(cursor, tokens, nextNode));
             return operatorNode;
         }
+
         //High priority operator
         else {
             operatorNode.children.push(nextNode);

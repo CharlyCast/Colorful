@@ -157,6 +157,7 @@ export default class Lexer {
         let currentIndex;
         let currentElement;
 
+        //Binary search to quickly find the right token
         while (minIndex <= maxIndex) {
             currentIndex = (minIndex + maxIndex) / 2 | 0;
             currentElement = this.alphabet[currentIndex];
