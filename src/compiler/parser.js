@@ -2,13 +2,13 @@ import Type from './types';
 import Value from './value';
 import SyntaxNode from './syntaxNode';
 
-export default function parse(tokens) {
+export default function parse(buffer) {
     let abstractSyntaxTrees = [];
-    let cursor = {pos: 0};
+    // let cursor = {pos: 0};
     let tree;
 
-    while (cursor.pos < tokens.length) {
-        tree = buildTree(cursor, tokens);
+    while (buffer.top()!==null) {
+        tree = buildTree(buffer);
         if (tree !== null) {
             if (tree.type!==Type.endLine){
                 abstractSyntaxTrees.push(tree);
@@ -17,23 +17,21 @@ export default function parse(tokens) {
         else {
             console.log("Error while parsing");
         }
-        cursor.pos++;
     }
 
     return abstractSyntaxTrees;
 }
 
-function buildNode(cursor, tokens) {
-    let token = tokens[cursor.pos];
+function buildNode(buffer) {
+    let token = buffer.pop();
     let color = token.color;
     switch (token.type) {
 
         case Type.number:
             let value = token.value;
-            while (tokens[cursor.pos + 1].type === Type.number && tokens[cursor.pos + 1].color === color) {
-                cursor.pos++;
+            while (buffer.top().type === Type.number && buffer.top().color === color) {
                 value *= 10;
-                value += tokens[cursor.pos].value;
+                value += buffer.pop().value;
             }
             if (color === "#ffffff") {
                 return new SyntaxNode(Type.number, value);
@@ -79,28 +77,25 @@ function buildNode(cursor, tokens) {
     return null;
 }
 
-function buildTree(cursor, tokens) {
+function buildTree(buffer) {
     //Build an abstract syntax tree that embodies the instruction starting at cursor position.
 
-    let node = buildNode(cursor, tokens);
-    cursor.pos++;
+    let node = buildNode(buffer);
 
     if (node.type === Type.number || node.type === Type.boolean || node.type===Type.id) {
-        return (buildExpression(cursor, tokens, node));
+        return (buildExpression(buffer, node));
     }
 
     //This is an affectation with an arrow  <-.
     else if (node.type === Type.affectation) {
-        let value = buildNode(cursor, tokens);
-        cursor.pos++;
-
+        let value = buildNode(buffer);
 
         if (value.type !== Type.number && value.type !== Type.id & value.type !== Type.boolean) {
             return null;
         }
         //Building the corresponding expression
         else {
-            node.children.push(buildExpression(cursor, tokens, value));
+            node.children.push(buildExpression(buffer, value));
         }
     }
 
@@ -108,11 +103,10 @@ function buildTree(cursor, tokens) {
 
 }
 
-function buildExpression(cursor, tokens, node) {
+function buildExpression(buffer, node) {
     //Recursive function that build the tree of the current expression.
-    //Takes a node which value is a number (or a variable) ans the cursor right after it.
 
-    let operatorNode = buildNode(cursor, tokens);
+    let operatorNode = buildNode(buffer);
 
     if (operatorNode === null) {
         //Error, should be an operator
@@ -122,14 +116,12 @@ function buildExpression(cursor, tokens, node) {
 
     if (operatorNode.type === Type.operator) {
         let nextNode;
-        cursor.pos++;
 
         //If this is a white operator
         //While building the operatorNode, if it was colored its first child is a reference to its color
         //Else it has only one child
         if (operatorNode.children.length===1){
-            nextNode = buildNode(cursor, tokens);
-            cursor.pos++;
+            nextNode = buildNode(buffer);
         }
         else {
             nextNode=operatorNode.children[0];
@@ -139,21 +131,21 @@ function buildExpression(cursor, tokens, node) {
         //Low priority operator
         if (operatorNode.value === Value.add || operatorNode.value === Value.sub || operatorNode.value === Value.or) {
 
-            //If the operator is a subtraction and the next isn't a high priority operator:
-            if (operatorNode.value === Value.sub && tokens[cursor.pos].type===Type.operator){
-                if (tokens[cursor.pos].value!==Value.mult && tokens[cursor.pos].value!==Value.div){
-                    operatorNode.children.push(nextNode);
-                    return buildExpression(cursor, tokens, operatorNode);
-                }
-            }
-            operatorNode.children.push(buildExpression(cursor, tokens, nextNode));
+            // //If the operator is a subtraction and the next isn't a high priority operator:
+            // if (operatorNode.value === Value.sub && tokens[cursor.pos].type===Type.operator){
+            //     if (tokens[cursor.pos].value!==Value.mult && tokens[cursor.pos].value!==Value.div){
+            //         operatorNode.children.push(nextNode);
+            //         return buildExpression(cursor, tokens, operatorNode);
+            //     }
+            // }
+            operatorNode.children.push(buildExpression(buffer, nextNode));
             return operatorNode;
         }
 
         //High priority operator
         else {
             operatorNode.children.push(nextNode);
-            return buildExpression(cursor, tokens, operatorNode);
+            return buildExpression(buffer, operatorNode);
         }
     }
     else if (operatorNode.type === Type.endLine) {
