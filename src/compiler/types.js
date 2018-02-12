@@ -6,6 +6,7 @@ export default class Type {
     static endLine = 5;
     static indent = 6;
     static affectation = 7;
+    static delimiter = 8;
 
     constructor() {
     }

@@ -155,3 +155,7 @@ function buildExpression(buffer, node) {
         return null;
     }
 }
+
+function buildExpression2(){
+
+}
