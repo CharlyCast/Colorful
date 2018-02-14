@@ -7,10 +7,10 @@ export default function parse(buffer) {
     // let cursor = {pos: 0};
     let tree;
 
-    while (buffer.top()!==null) {
+    while (buffer.top() !== null) {
         tree = buildTree(buffer);
         if (tree !== null) {
-            if (tree.type!==Type.endLine){
+            if (tree.type !== Type.endLine) {
                 abstractSyntaxTrees.push(tree);
             }
         }
@@ -37,18 +37,18 @@ function buildNode(buffer) {
                 return new SyntaxNode(Type.number, value);
             }
             else {
-                let affectation =new SyntaxNode(Type.affectation, color, [new SyntaxNode(Type.number, value)]);
+                let affectation = new SyntaxNode(Type.affectation, color, [new SyntaxNode(Type.number, value)]);
                 return new SyntaxNode(Type.id, color, [affectation]);
             }
             break;
 
         case Type.boolean:
-            if (color === "#ffffff"){
+            if (color === "#ffffff") {
                 return new SyntaxNode(Type.boolean, token.value);
             }
             else {
                 let affectation = new SyntaxNode(Type.affectation, color, [new SyntaxNode(Type.boolean, token.value)]);
-                return new SyntaxNode(Type.id,color, [affectation]);
+                return new SyntaxNode(Type.id, color, [affectation]);
             }
             break;
 
@@ -57,11 +57,13 @@ function buildNode(buffer) {
             break;
 
         case Type.operator:
-            if (color === "#ffffff"){
-                return new SyntaxNode(Type.operator, token.value);
+            if (color === "#ffffff") {
+                return new SyntaxNode(Type.operator, token.value, [],
+                    {priority: token.priority, associativity: token.associativity});
             }
-            else{
-                return new SyntaxNode(Type.operator, token.value, [new SyntaxNode(Type.id, color)]);
+            else {
+                return new SyntaxNode(Type.operator, token.value, [new SyntaxNode(Type.id, color)],
+                    {priority: token.priority, associativity: token.associativity});
             }
 
             break;
@@ -82,7 +84,7 @@ function buildTree(buffer) {
 
     let node = buildNode(buffer);
 
-    if (node.type === Type.number || node.type === Type.boolean || node.type===Type.id) {
+    if (node.type === Type.number || node.type === Type.boolean || node.type === Type.id) {
         return (buildExpression(buffer, node));
     }
 
@@ -120,12 +122,12 @@ function buildExpression(buffer, node) {
         //If this is a white operator
         //While building the operatorNode, if it was colored its first child is a reference to its color
         //Else it has only one child
-        if (operatorNode.children.length===1){
+        if (operatorNode.children.length === 1) {
             nextNode = buildNode(buffer);
         }
         else {
-            nextNode=operatorNode.children[0];
-            operatorNode.children=[operatorNode.children[1]];
+            nextNode = operatorNode.children[0];
+            operatorNode.children = [operatorNode.children[1]];
         }
 
         //Low priority operator
@@ -156,6 +158,29 @@ function buildExpression(buffer, node) {
     }
 }
 
-function buildExpression2(){
+function buildExpression2(buffer) {
+    let stack = [];
+    let output = [];
+    let token = buffer.top();
+    let node;
 
+    //While the next token is an expression token
+    while (token.type === Type.number ||
+    token.type === Type.boolean ||
+    token.type === Type.operator ||
+    token.type === Type.delimiter ||
+    token.type === Type.id) {
+
+
+        switch (token.type) {
+            case Type.number :
+            case Type.boolean :
+            case Type.id:
+                output.push(buildNode(buffer));
+                break;
+            case Type.operator :
+
+
+        }
+    }
 }

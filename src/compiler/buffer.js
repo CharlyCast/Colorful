@@ -1,11 +1,12 @@
 export default class Buffer {
 
     constructor(tokens) {
-        this.tokens=tokens
+        this.tokens = tokens
     }
 
-    pop(){
-        if (this.tokens.length>0){
+    // Remove the next token
+    pop() {
+        if (this.tokens.length > 0) {
             return this.tokens.shift();
         }
         else {
@@ -13,8 +14,9 @@ export default class Buffer {
         }
     }
 
-    top(){
-        if (this.tokens.length>0){
+    // Return the next token but don't remove it
+    top() {
+        if (this.tokens.length > 0) {
             return this.tokens[0];
         }
         else {
