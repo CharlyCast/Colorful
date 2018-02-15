@@ -142,11 +142,11 @@ export default [
         edges: [[1, 2], [1, 4], [4, 7], [7, 8]],
         romaji: "(",
         type: Type.delimiter,
-        value: Value.rightParenthesis
+        value: Value.leftParenthesis
     }, {
         edges: [[1, 2], [2, 5], [5, 8], [7, 8]],
         romaji: ")",
         type: Type.delimiter,
-        value: Value.leftParenthesis
+        value: Value.rightParenthesis
     }
 ];

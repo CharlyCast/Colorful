@@ -13,7 +13,6 @@ export default class Lexer {
     //Implement a binary search
 
     classify(s) {
-        // console.log("Classifying : ", s);
 
         // Endline and Indent symbol
         if (s.edges.length === 0) {

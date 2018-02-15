@@ -57,14 +57,19 @@ function buildNode(buffer) {
             break;
 
         case Type.operator:
-            if (color === "#ffffff") {
-                return new SyntaxNode(Type.operator, token.value, [],
-                    {priority: token.priority, associativity: token.associativity});
+            if (color !== "#ffffff") {
+                buffer.put({
+                    romaji: "var",
+                    type: Type.id,
+                    color: color
+                })
             }
-            else {
-                return new SyntaxNode(Type.operator, token.value, [new SyntaxNode(Type.id, color)],
-                    {priority: token.priority, associativity: token.associativity});
-            }
+            // else {
+            //     return new SyntaxNode(Type.operator, token.value, [new SyntaxNode(Type.id, color)],
+            //         {priority: token.priority, associativity: token.associativity});
+            // }
+            return new SyntaxNode(Type.operator, token.value, [],
+                {priority: token.priority, associativity: token.associativity});
 
             break;
 
@@ -133,13 +138,6 @@ function buildExpression(buffer, node) {
         //Low priority operator
         if (operatorNode.value === Value.add || operatorNode.value === Value.sub || operatorNode.value === Value.or) {
 
-            // //If the operator is a subtraction and the next isn't a high priority operator:
-            // if (operatorNode.value === Value.sub && tokens[cursor.pos].type===Type.operator){
-            //     if (tokens[cursor.pos].value!==Value.mult && tokens[cursor.pos].value!==Value.div){
-            //         operatorNode.children.push(nextNode);
-            //         return buildExpression(cursor, tokens, operatorNode);
-            //     }
-            // }
             operatorNode.children.push(buildExpression(buffer, nextNode));
             return operatorNode;
         }
@@ -179,7 +177,23 @@ function buildExpression2(buffer) {
                 output.push(buildNode(buffer));
                 break;
             case Type.operator :
+                let loop=true;
+                while (loop && stack[0].type===Type.operator){
+                    if (token.priority<=stack[0].rules.priority
+                    || (token.priority<=stack[0].rules.priority && token.associativity===Value.left)){
+                        output.push(stack.shift());
+                    }
+                    else {
+                        loop=false;
+                    }
+                }
+                //Transform the operator token into a node and put it on the stack
+                stack.push(buildNode(buffer));
+                break;
+            case Type.delimiter:
+                if (token.value===Value.leftParenthesis){
 
+                }
 
         }
     }
