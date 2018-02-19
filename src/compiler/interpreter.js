@@ -13,7 +13,7 @@ export default class Interpreter {
 
         console.log("Tokens : ", tokens);
 
-        // console.log("Parsed tokens : ", parse(buffer));
+        console.log("Parsed tokens : ", parse(buffer));
 
         // console.log("Buffer : ", buffer.tokens);
         // console.log("top : ", buffer.top());

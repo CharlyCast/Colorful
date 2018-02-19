@@ -73,6 +73,10 @@ function buildNode(buffer) {
 
             break;
 
+        case Type.delimiter:
+            return new SyntaxNode(Type.delimiter, token.value);
+            break;
+
         case Type.affectation:
             return new SyntaxNode(Type.affectation, token.color);
             break;
@@ -90,7 +94,7 @@ function buildTree(buffer) {
     let node = buildNode(buffer);
 
     if (node.type === Type.number || node.type === Type.boolean || node.type === Type.id) {
-        return (buildExpression(buffer, node));
+        return (buildExpression2(buffer, node));
     }
 
     //This is an affectation with an arrow  <-.
@@ -102,7 +106,7 @@ function buildTree(buffer) {
         }
         //Building the corresponding expression
         else {
-            node.children.push(buildExpression(buffer, value));
+            node.children.push(buildExpression2(buffer, value));
         }
     }
 
@@ -156,14 +160,15 @@ function buildExpression(buffer, node) {
     }
 }
 
-function buildExpression2(buffer) {
+function buildExpression2(buffer,initialNode) {
     let stack = [];
-    let output = [];
+    let output = [initialNode];
     let token = buffer.top();
     let node;
 
     //While the next token is an expression token
-    while (token.type === Type.number ||
+    while (token !== null &&
+    token.type === Type.number ||
     token.type === Type.boolean ||
     token.type === Type.operator ||
     token.type === Type.delimiter ||
@@ -177,24 +182,45 @@ function buildExpression2(buffer) {
                 output.push(buildNode(buffer));
                 break;
             case Type.operator :
-                let loop=true;
-                while (loop && stack[0].type===Type.operator){
-                    if (token.priority<=stack[0].rules.priority
-                    || (token.priority<=stack[0].rules.priority && token.associativity===Value.left)){
+                let loop = true;
+                while (stack.length>0 && loop && stack[0].type === Type.operator) {
+                    if (token.priority <= stack[0].rules.priority
+                        || (token.priority <= stack[0].rules.priority && token.associativity === Value.left)) {
                         output.push(stack.shift());
                     }
                     else {
-                        loop=false;
+                        loop = false;
                     }
                 }
                 //Transform the operator token into a node and put it on the stack
-                stack.push(buildNode(buffer));
+                stack.unshift(buildNode(buffer));
                 break;
             case Type.delimiter:
-                if (token.value===Value.leftParenthesis){
-
+                if (token.value === Value.leftParenthesis) {
+                    stack.unshift(buildNode(buffer));
+                }
+                else {
+                    // Trow the parenthesis away and add the top stack
+                    // operator to the output until we find a left parenthesis
+                    buffer.pop();
+                    while (stack.length > 0 && stack[0].value !== Value.leftParenthesis) {
+                        output.push(stack.shift());
+                    }
                 }
 
         }
+
+        token = buffer.top();
     }
+
+    while (stack.length>0){
+        if (stack[0].value===Value.leftParenthesis){
+            // Error, unexpected parenthesis
+            return null;
+        }
+        output.push(stack.shift());
+    }
+
+    console.log("Output : ",output);
+    return null;
 }
