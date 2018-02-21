@@ -85,6 +85,8 @@ function buildNode(buffer) {
             return new SyntaxNode(Type.endLine);
             break;
     }
+
+    console.log("Error while building a node, unrecognized type");
     return null;
 }
 
@@ -101,7 +103,8 @@ function buildTree(buffer) {
     else if (node.type === Type.affectation) {
         let value = buildNode(buffer);
 
-        if (value.type !== Type.number && value.type !== Type.id & value.type !== Type.boolean) {
+        if (value.type !== Type.number && value.type !== Type.id && value.type !== Type.boolean) {
+            console.log("Expression parsing failed, non-numerical token");
             return null;
         }
         //Building the corresponding expression
@@ -160,11 +163,11 @@ function buildExpression(buffer, node) {
     }
 }
 
-function buildExpression2(buffer,initialNode) {
+// Build a tree from the expression using shunting yard algorithm
+function buildExpression2(buffer, initialNode) {
     let stack = [];
     let output = [initialNode];
     let token = buffer.top();
-    let node;
 
     //While the next token is an expression token
     while (token !== null &&
@@ -183,7 +186,7 @@ function buildExpression2(buffer,initialNode) {
                 break;
             case Type.operator :
                 let loop = true;
-                while (stack.length>0 && loop && stack[0].type === Type.operator) {
+                while (stack.length > 0 && loop && stack[0].type === Type.operator) {
                     if (token.priority <= stack[0].rules.priority
                         || (token.priority <= stack[0].rules.priority && token.associativity === Value.left)) {
                         output.push(stack.shift());
@@ -206,6 +209,9 @@ function buildExpression2(buffer,initialNode) {
                     while (stack.length > 0 && stack[0].value !== Value.leftParenthesis) {
                         output.push(stack.shift());
                     }
+                    if (stack.length > 0 && stack[0].value === Value.leftParenthesis) {
+                        stack.shift();
+                    }
                 }
 
         }
@@ -213,14 +219,48 @@ function buildExpression2(buffer,initialNode) {
         token = buffer.top();
     }
 
-    while (stack.length>0){
-        if (stack[0].value===Value.leftParenthesis){
+    while (stack.length > 0) {
+        if (stack[0].value === Value.leftParenthesis) {
             // Error, unexpected parenthesis
+            console.log("Unexpected or expected parenthesis");
+            console.log("Stack : ", stack);
             return null;
         }
         output.push(stack.shift());
     }
 
-    console.log("Output : ",output);
-    return null;
+    console.log("Output : ", output.slice());
+    return polishToTree(output);
+}
+
+//Transform the reverse polish input into a syntax tree
+function polishToTree(polish) {
+    let stack = [];
+    let node;
+    while (polish.length > 0) {
+        node = polish.shift();
+
+        if (node.type === Type.operator) {
+            if (stack.length < 2) {
+                console.log("Insufficient number of arguments");
+                return null;
+            }
+            else {
+                node.children.unshift(stack.pop());
+                node.children.unshift(stack.pop());
+                stack.push(node);
+            }
+        }
+        else {
+            stack.push(node);
+        }
+    }
+
+    if (stack.length === 1) {
+        return stack.pop();
+    }
+    else {
+        console.log("Unexpected polish notation", stack);
+        return null;
+    }
 }
