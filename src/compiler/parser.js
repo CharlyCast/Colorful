@@ -64,10 +64,6 @@ function buildNode(buffer) {
                     color: color
                 })
             }
-            // else {
-            //     return new SyntaxNode(Type.operator, token.value, [new SyntaxNode(Type.id, color)],
-            //         {priority: token.priority, associativity: token.associativity});
-            // }
             return new SyntaxNode(Type.operator, token.value, [],
                 {priority: token.priority, associativity: token.associativity});
 
@@ -79,6 +75,10 @@ function buildNode(buffer) {
 
         case Type.affectation:
             return new SyntaxNode(Type.affectation, token.color);
+            break;
+
+        case Type.loop:
+            return new SyntaxNode(Type.loop, token.value);
             break;
 
         case Type.endLine:
@@ -96,7 +96,11 @@ function buildTree(buffer) {
     let node = buildNode(buffer);
 
     if (node.type === Type.number || node.type === Type.boolean || node.type === Type.id) {
-        return (buildExpression2(buffer, node));
+        return (buildExpression(buffer, node));
+    }
+
+    if (node.type === Type.delimiter) {
+        return (buildExpression(buffer, node));
     }
 
     //This is an affectation with an arrow  <-.
@@ -109,7 +113,7 @@ function buildTree(buffer) {
         }
         //Building the corresponding expression
         else {
-            node.children.push(buildExpression2(buffer, value));
+            node.children.push(buildExpression(buffer, value));
         }
     }
 
@@ -117,65 +121,27 @@ function buildTree(buffer) {
 
 }
 
-function buildExpression(buffer, node) {
-    //Recursive function that build the tree of the current expression.
-
-    let operatorNode = buildNode(buffer);
-
-    if (operatorNode === null) {
-        //Error, should be an operator
-        return null;
-    }
-    operatorNode.children.push(node);
-
-    if (operatorNode.type === Type.operator) {
-        let nextNode;
-
-        //If this is a white operator
-        //While building the operatorNode, if it was colored its first child is a reference to its color
-        //Else it has only one child
-        if (operatorNode.children.length === 1) {
-            nextNode = buildNode(buffer);
-        }
-        else {
-            nextNode = operatorNode.children[0];
-            operatorNode.children = [operatorNode.children[1]];
-        }
-
-        //Low priority operator
-        if (operatorNode.value === Value.add || operatorNode.value === Value.sub || operatorNode.value === Value.or) {
-
-            operatorNode.children.push(buildExpression(buffer, nextNode));
-            return operatorNode;
-        }
-
-        //High priority operator
-        else {
-            operatorNode.children.push(nextNode);
-            return buildExpression(buffer, operatorNode);
-        }
-    }
-    else if (operatorNode.type === Type.endLine) {
-        return node;
-    }
-    else { //Error, operator or endLine expected
-        return null;
-    }
-}
-
 // Build a tree from the expression using shunting yard algorithm
-function buildExpression2(buffer, initialNode) {
+function buildExpression(buffer, initialNode) {
     let stack = [];
-    let output = [initialNode];
+    let output = [];
     let token = buffer.top();
 
+    if (
+        initialNode.type === Type.number ||
+        initialNode.type === Type.boolean ||
+        initialNode.type === Type.id) {
+        output.push(initialNode);
+    }
+
     //While the next token is an expression token
-    while (token !== null &&
-    token.type === Type.number ||
-    token.type === Type.boolean ||
-    token.type === Type.operator ||
-    token.type === Type.delimiter ||
-    token.type === Type.id) {
+    while (
+        token !== null &&
+        token.type === Type.number ||
+        token.type === Type.boolean ||
+        token.type === Type.operator ||
+        token.type === Type.delimiter ||
+        token.type === Type.id) {
 
 
         switch (token.type) {

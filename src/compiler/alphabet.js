@@ -120,18 +120,21 @@ export default [
         edges: [[1, 2], [4, 5]],
         romaji: "=",
         type: Type.operator,
+        value: Value.equal,
         priority: 5,
         associativity: Value.right
     }, {
         edges: [[1, 6], [4, 5], [5, 6]],
         romaji: ">",
         type: Type.operator,
+        value: Value.greater,
         priority: 9,
         associativity: Value.left
     }, {
         edges: [[3, 4], [4, 5], [5, 6]],
         romaji: "<",
         type: Type.operator,
+        value: Value.less,
         priority: 9,
         associativity: Value.left
     }, {
@@ -148,5 +151,10 @@ export default [
         romaji: ")",
         type: Type.delimiter,
         value: Value.rightParenthesis
+    }, {
+        edges: [[1, 3], [2, 3], [2, 5], [3, 5], [4, 7], [6, 9], [7, 8], [8, 9]],
+        romaji: "while",
+        type: Type.loop,
+        value: Value.while
     }
 ];

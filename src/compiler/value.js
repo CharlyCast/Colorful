@@ -5,10 +5,16 @@ export default class Value {
     static div = 4;
     static or = 5;
     static and = 6;
-    static rightParenthesis = 7;
-    static leftParenthesis = 8;
-    static right = 9;
-    static left = 10;
+    static leq =7;
+    static geq = 8;
+    static equal = 9;
+    static less = 10;
+    static greater = 11;
+    static rightParenthesis = 12;
+    static leftParenthesis = 13;
+    static right = 14;
+    static left = 15;
+    static while=16;
 
     constructor() {
     }
