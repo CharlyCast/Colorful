@@ -152,7 +152,7 @@ export default [
         type: Type.delimiter,
         value: Value.rightParenthesis
     }, {
-        edges: [[1, 3], [2, 3], [2, 5], [3, 5], [4, 7], [6, 9], [7, 8], [8, 9]],
+        edges: [[1, 4], [2, 3], [2, 5], [3, 6], [4, 7], [6, 9], [7, 8], [8, 9]],
         romaji: "while",
         type: Type.loop,
         value: Value.while

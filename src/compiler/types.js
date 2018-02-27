@@ -8,6 +8,8 @@ export default class Type {
     static affectation = 7;
     static delimiter = 8;
     static loop = 9;
+    static bloc=10;
+    static endBloc=11;
 
     constructor() {
     }

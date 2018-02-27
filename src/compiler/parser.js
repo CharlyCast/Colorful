@@ -78,6 +78,13 @@ function buildNode(buffer) {
             break;
 
         case Type.loop:
+            if (color !== "#ffffff") {
+                buffer.put({
+                    romaji: "var",
+                    type: Type.id,
+                    color: color
+                })
+            }
             return new SyntaxNode(Type.loop, token.value);
             break;
 
@@ -90,8 +97,17 @@ function buildNode(buffer) {
     return null;
 }
 
-function buildTree(buffer) {
+function buildTree(buffer, indent=0) {
     //Build an abstract syntax tree that embodies the instruction starting at cursor position.
+
+    console.log("indent : ", indent);
+    for (let i=0;i<indent;i++){
+        if (buffer.top() ===null || buffer.top().type!==Type.indent){
+            console.log("EndBlock");
+            return new SyntaxNode(Type.endBloc);
+        }
+        buffer.pop();
+    }
 
     let node = buildNode(buffer);
 
@@ -107,7 +123,8 @@ function buildTree(buffer) {
     else if (node.type === Type.affectation) {
         let value = buildNode(buffer);
 
-        if (value.type !== Type.number && value.type !== Type.id && value.type !== Type.boolean) {
+        if (value.type !== Type.number && value.type !== Type.id &&
+            value.type !== Type.boolean && value.type !== Type.delimiter) {
             console.log("Expression parsing failed, non-numerical token");
             return null;
         }
@@ -117,12 +134,31 @@ function buildTree(buffer) {
         }
     }
 
+    if (node.type === Type.loop) {
+        node.children.push(buildExpression(buffer));
+        node.children.push(
+            new SyntaxNode(Type.bloc)
+        );
+        //Removing the endline and building the next instruction
+        buffer.pop();
+        let instruction=buildTree(buffer,indent+1);
+
+        while (instruction.type!==Type.endBloc){
+            //While the next instruction is correctly indented, we add it to the bloc of the loop
+            node.children[1].children.push(instruction);
+
+            buffer.pop();
+            instruction=buildTree(buffer,indent+1);
+        }
+
+    }
+
     return node;
 
 }
 
 // Build a tree from the expression using shunting yard algorithm
-function buildExpression(buffer, initialNode) {
+function buildExpression(buffer, initialNode = buildNode(buffer)) {
     let stack = [];
     let output = [];
     let token = buffer.top();
@@ -195,7 +231,7 @@ function buildExpression(buffer, initialNode) {
         output.push(stack.shift());
     }
 
-    console.log("Output : ", output.slice());
+    // console.log("Output : ", output.slice());
     return polishToTree(output);
 }
 
