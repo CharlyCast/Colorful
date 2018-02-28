@@ -156,5 +156,16 @@ export default [
         romaji: "while",
         type: Type.loop,
         value: Value.while
-    }
+    },{
+        edges: [[2, 3], [2, 5], [4, 5]],
+        romaji: "if",
+        type: Type.conditional,
+        value: Value.if
+    },{
+        edges: [[4, 5], [5, 8], [8, 9]],
+        romaji: "else",
+        type: Type.conditional,
+        value: Value.else
+    },
+
 ];

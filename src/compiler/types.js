@@ -10,6 +10,7 @@ export default class Type {
     static loop = 9;
     static bloc=10;
     static endBloc=11;
+    static conditional=12;
 
     constructor() {
     }
