@@ -25,7 +25,11 @@ export default class Buffer {
     }
 
     // Add a token on the top of the stack
-    put(t){
+    put(t) {
         this.tokens.unshift(t);
+    }
+
+    isEmpty() {
+        return this.tokens.size() === 0;
     }
 }

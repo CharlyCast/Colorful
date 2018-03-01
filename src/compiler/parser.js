@@ -57,13 +57,7 @@ function buildNode(buffer) {
             break;
 
         case Type.operator:
-            if (color !== "#ffffff") {
-                buffer.put({
-                    romaji: "var",
-                    type: Type.id,
-                    color: color
-                })
-            }
+            buildColoredNodes(buffer, color);
             return new SyntaxNode(Type.operator, token.value, [],
                 {priority: token.priority, associativity: token.associativity});
 
@@ -78,14 +72,13 @@ function buildNode(buffer) {
             break;
 
         case Type.loop:
-            if (color !== "#ffffff") {
-                buffer.put({
-                    romaji: "var",
-                    type: Type.id,
-                    color: color
-                })
-            }
+            buildColoredNodes(buffer, color);
             return new SyntaxNode(Type.loop, token.value);
+            break;
+
+        case Type.conditional:
+            buildColoredNodes(buffer, color);
+            return new SyntaxNode(Type.conditional, token.value);
             break;
 
         case Type.endLine:
@@ -97,14 +90,23 @@ function buildNode(buffer) {
     return null;
 }
 
-function buildTree(buffer, indent=0) {
+function buildColoredNodes(buffer, color) {
+    if (color !== "#ffffff") {
+        buffer.put({
+            romaji: "var",
+            type: Type.id,
+            color: color
+        })
+    }
+}
+
+function buildTree(buffer, indent = 0) {
     //Build an abstract syntax tree that embodies the instruction starting at cursor position.
 
-    console.log("indent : ", indent);
-    for (let i=0;i<indent;i++){
-        if (buffer.top() ===null || buffer.top().type!==Type.indent){
-            console.log("EndBlock");
-            return new SyntaxNode(Type.endBloc);
+    //Removing the indentation
+    for (let i = 0; i < indent; i++) {
+        if (buffer.top() === null || buffer.top().type !== Type.indent) {
+            return new SyntaxNode(Type.endBlock);
         }
         buffer.pop();
     }
@@ -136,25 +138,59 @@ function buildTree(buffer, indent=0) {
 
     if (node.type === Type.loop) {
         node.children.push(buildExpression(buffer));
-        node.children.push(
-            new SyntaxNode(Type.bloc)
-        );
-        //Removing the endline and building the next instruction
-        buffer.pop();
-        let instruction=buildTree(buffer,indent+1);
+        node.children.push(new SyntaxNode(Type.block));
 
-        while (instruction.type!==Type.endBloc){
-            //While the next instruction is correctly indented, we add it to the bloc of the loop
-            node.children[1].children.push(instruction);
+        // //Removing the endline and building the next instruction
+        // buffer.pop();
+        // let instruction = buildTree(buffer, indent + 1);
+        //
+        // while (instruction.type !== Type.endBlock) {
+        //     //While the next instruction is correctly indented, we add it to the block of the loop
+        //     node.children[1].children.push(instruction);
+        //
+        //     buffer.pop();
+        //     instruction = buildTree(buffer, indent + 1);
+        // }
 
-            buffer.pop();
-            instruction=buildTree(buffer,indent+1);
+        buildBlock(node.children[1], buffer, indent);
+    }
+
+    if (node.type === Type.conditional) {
+        if (node.value !== Value.if) {
+            console.log("Eror : if expected");
         }
 
+        node.children.push(buildExpression(buffer));
+        node.children.push(new SyntaxNode(Type.block));
+
+        buildBlock(node.children[1], buffer, indent);
+
+        node.children.push(new SyntaxNode(Type.block));
+
+        if (buffer.top !== null && buffer.top().type === Type.conditional && buffer.top().value === Value.else) {
+            buffer.pop();
+            buildBlock(node.children[2], buffer, indent);
+        }
     }
 
     return node;
 
+}
+
+function buildBlock(block, buffer, indent) {
+    //build the block's children
+
+    //Removing the endLine and building the next instruction
+    buffer.pop();
+    let instruction = buildTree(buffer, indent + 1);
+
+    while (instruction.type !== Type.endBlock) {
+        //While the next instruction is correctly indented, we add it to the block of the loop
+        block.children.push(instruction);
+
+        buffer.pop();
+        instruction = buildTree(buffer, indent + 1);
+    }
 }
 
 // Build a tree from the expression using shunting yard algorithm
