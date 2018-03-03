@@ -7,5 +7,6 @@ export default class SyntaxNode{
         this.value=value;
         this.children=children;
         this.rules=rules;
+        this.payload=null;
     }
 }

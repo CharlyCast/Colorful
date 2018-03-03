@@ -3,7 +3,7 @@ import Value from './value';
 import SyntaxNode from './syntaxNode';
 
 export default function parse(buffer) {
-    let abstractSyntaxTrees = [];
+    let abstractSyntaxTrees = new SyntaxNode(Type.block);
     // let cursor = {pos: 0};
     let tree;
 
@@ -11,7 +11,7 @@ export default function parse(buffer) {
         tree = buildTree(buffer);
         if (tree !== null) {
             if (tree.type !== Type.endLine) {
-                abstractSyntaxTrees.push(tree);
+                abstractSyntaxTrees.children.push(tree);
             }
         }
         else {
@@ -139,19 +139,6 @@ function buildTree(buffer, indent = 0) {
     if (node.type === Type.loop) {
         node.children.push(buildExpression(buffer));
         node.children.push(new SyntaxNode(Type.block));
-
-        // //Removing the endline and building the next instruction
-        // buffer.pop();
-        // let instruction = buildTree(buffer, indent + 1);
-        //
-        // while (instruction.type !== Type.endBlock) {
-        //     //While the next instruction is correctly indented, we add it to the block of the loop
-        //     node.children[1].children.push(instruction);
-        //
-        //     buffer.pop();
-        //     instruction = buildTree(buffer, indent + 1);
-        // }
-
         buildBlock(node.children[1], buffer, indent);
     }
 
