@@ -154,7 +154,7 @@ function buildTree(buffer, indent = 0) {
 
         node.children.push(new SyntaxNode(Type.block));
 
-        if (buffer.top !== null && buffer.top().type === Type.conditional && buffer.top().value === Value.else) {
+        if (buffer.top() !== null && buffer.top().type === Type.conditional && buffer.top().value === Value.else) {
             buffer.pop();
             buildBlock(node.children[2], buffer, indent);
         }
