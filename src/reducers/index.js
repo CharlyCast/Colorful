@@ -6,6 +6,7 @@ import ColorSelectionReducer from './reducer_color_selection'
 import ActivatedSensors from  './reducer_drawing';
 import DrawCode from './reducer_code';
 import MoveCursor from './reducer_cursor';
+import GetHeap from './reducer_heap';
 
 const rootReducer = combineReducers({
     appBody: NavigatorReducer,
@@ -14,7 +15,8 @@ const rootReducer = combineReducers({
     colors: ColorReducer,
     activatedSensors: ActivatedSensors,
     code: DrawCode,
-    cursorPosition: MoveCursor
+    cursorPosition: MoveCursor,
+    heap:GetHeap
 });
 
 export default rootReducer;

@@ -22,6 +22,8 @@ export default class Interpreter {
         this.execute(syntaxTree);
 
         console.log("Heap : ", this.heap);
+
+        return this.heap;
     }
 
     execute(syntaxTree){

@@ -1,25 +1,34 @@
 import React, {Component} from 'react'
 import {connect} from 'react-redux';
-import {bindActionCreators} from 'redux';
 
 
-class Terminal extends Component{
+class Terminal extends Component {
 
-    render (){
+    render() {
         return (
             <div className="terminal">
-                Terminal
+                {this.printVariables()}
             </div>
         )
+    }
+
+    printVariables() {
+        if (this.props.heap===null){
+            return <p>No output yet</p>
+        }
+        else {
+            console.log(this.props.heap);
+            return Object.keys(this.props.heap).map((color) => {
+                return <p key={color} style={{color:color, fontSize:"x-large"}}>
+                    {this.props.heap[color]}
+                </p>
+            });
+        }
     }
 }
 
 function mapStateToProps(state) {
-    return {};
+    return {heap: state.heap};
 }
-
-// function mapDispatchToProps(dispatch) {
-//     return bindActionCreators({}, dispatch);
-// }
 
 export default connect(mapStateToProps)(Terminal)

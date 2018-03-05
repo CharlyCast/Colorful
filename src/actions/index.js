@@ -6,6 +6,7 @@ export function changeAppBody(env) {
 }
 
 export function loadInterpreter(interpreter){
+    //Call reducer_interpreter.js
     return {
         type: 'LOAD_INTERPRETER',
         payload: interpreter
@@ -85,5 +86,15 @@ export function removeCursor(cursorPosition){
     return {
         type: 'REMOVE_CURSOR',
         payload: cursorPosition
+    }
+}
+
+export function getHeap(heap){
+    //Return the heap with the value of the variables after the code was interpreted
+    //Call reducer_heap.js
+    console.log("getHeap activated !");
+    return {
+        type: 'RETURN_HEAP',
+        payload: heap
     }
 }

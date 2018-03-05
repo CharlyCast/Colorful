@@ -3,20 +3,12 @@ import {connect} from 'react-redux';
 import {bindActionCreators} from 'redux';
 import {changeColor} from "../actions/index";
 
-class ColorPicker extends Component{
-    // constructor(props) {
-    //     super(props);
-    //
-    //     this.state = {
-    //         color:this.props.color
-    //     };
-    // }
-
-    render (){
+class ColorPicker extends Component {
+    render() {
         return (
             <div className="color-picker"
-            style={{backgroundColor:this.props.color}}
-            onClick={()=>this.props.changeColor(this.props.color)}>
+                 style={{backgroundColor: this.props.color}}
+                 onClick={() => this.props.changeColor(this.props.color)}>
             </div>
         )
     }
