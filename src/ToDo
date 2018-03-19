@@ -9,3 +9,5 @@ Possibiliter d'insérer une ligne avec un retour à la ligne
 Meilleure gestion de la taille des élements. Passer app en flex et espacer les composant
 
 corriger l'erreur quand on "draw" avec un dessin vide
+
+Ajouter le modulo à l'interpréteur
