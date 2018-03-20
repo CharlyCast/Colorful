@@ -68,6 +68,29 @@ export default class Doc extends Component {
                 <p>
                     <img src={"img/doc/andOr.png"}/> Respectively "and" and "or" operators.
                 </p>
+
+                <h2>Advanced symbols</h2>
+
+                <p>
+                    For more advanced syntax Colorful use the off-side rule which mean that blocks are identified by
+                    their indentation. Whenever a new bloc is created everything in it should be indented exactly
+                    one more time that the number of indentation of the symbol declaring the block (such as a if
+                    symbol for instance).
+                </p>
+
+                <h3>Conditions</h3>
+                <p>
+                    <img src={"img/doc/ifElse.png"}/> Respectively the if and else symbol. If should always be followed
+                    by a boolean or a boolean expression and then following block should be indented.
+                    As for most operators, if the if symbol is colored it will be interpreted as if followed by the
+                    corresponding variable. The else symbol doesn't need any condition (and don't support them for now).
+                </p>
+
+                <h3>Example</h3>
+                <p>
+                    <img src={"img/doc/ifCode.png"}/> This code does compare the orange variable to the violet, if the
+                    orange is greater then orange take the value of violet, else orange take the value 0.
+                </p>
             </div>
         )
     }
