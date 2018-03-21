@@ -91,6 +91,12 @@ export default class Doc extends Component {
                     <img src={"img/doc/ifCode.png"}/> This code does compare the orange variable to the violet, if the
                     orange is greater then orange take the value of violet, else orange take the value 0.
                 </p>
+
+                <h3>Loops</h3>
+                <p>
+                    <img src={"img/doc/while.png"}/> For now only the while loop is supported. The while symbol should
+                    be followed by a boolean (or an expression resulting in a boolean).
+                </p>
             </div>
         )
     }
